@@ -1,5 +1,6 @@
 /* O "@layer base" garante que os estilos sejam carregados antes das classes utilitárias do Tailwind (classes fornecidas pelo Tailwind). As classes utilizatárias, caso inseridas depois, não sobrescrevem os estilos criados */
 @layer base {
+    /* A tag <html> começa com os estilos padrão light */
   :root,
   /* O componente que possuir o atributo data-theme="light" terá os estilos aplicados */
   [data-theme="light"] {
