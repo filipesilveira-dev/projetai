@@ -1,10 +1,13 @@
-import { Clock, TrendingUp, Wallet } from "lucide-react";
+import { Clock, TrendingUp, Wallet,Moon, Sun } from "lucide-react";
 import { Button } from "./Button";
 import { useNavigate } from "react-router-dom";
+import { Divider } from "./Divider";
+import { useTheme } from "../../hooks/useTheme";
 
 export function Header() {
     // Permite a navegação programática entre as rotas da aplicação. O hook useNavigate retorna uma função que pode ser chamada para navegar para uma rota específica. No caso, é utilizado para navegar para a rota "/" ao clicar no botão "Nova simulação" e para a rota "historico" ao clicar no botão "Histórico".
   const navigate = useNavigate();
+  const { theme, toggleTheme } = useTheme();
 
   return (
     <header className="border-b border-(--border) px-6 py-3">
@@ -36,6 +39,14 @@ export function Header() {
           >
             <span className="hidden sm:inline">Histórico</span>
           </Button>
+          <Divider orientation="vertical" />
+          <Button
+	          aria-label={`Mudar para tema ${theme === 'light' ? 'escuro' : 'claro'}`}
+	          variant='ghost'
+	          icon={theme === 'light' ? Moon : Sun}
+	          onClick={toggleTheme}
+          />
+
         </div>
       </nav>
     </header>
