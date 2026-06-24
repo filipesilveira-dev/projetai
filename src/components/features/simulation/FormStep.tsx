@@ -5,8 +5,11 @@
 import { ArrowLeft, ArrowRight, type LucideIcon } from "lucide-react";
 import { Input, type InputProps } from "../../shared/Input";
 import { Button } from "../../shared/Button";
+import { useState, type SyntheticEvent } from "react";
 
-interface FormStepProps {
+export interface FormStepProps {
+  // Adicionei a propriedade id para identificar cada passo do formulário de forma única. Isso pode ser útil para navegação, rastreamento ou manipulação de estado.
+  id: string;
   icon: LucideIcon;
   title: string;
   question: string;
@@ -17,6 +20,12 @@ interface FormStepProps {
     label: string;
     emojiIcon?: string;
   };
+}
+
+interface ActionsButtonsProps {
+  onBack: () => void;
+  onNext: () => void;
+  hideBackButton?: boolean;
 }
 
 export function FormStep({
@@ -30,7 +39,24 @@ export function FormStep({
   inputProps,
   // recebe de Form.tsx as props do botão de submit, que são passadas para o botão dentro do FormStep (opcional). Não é obrigatório, pois o botão de submit pode ter um comportamento padrão caso não seja fornecido.
   submitButtonProps,
-}: FormStepProps) {
+  onBack,
+  onNext,
+  hideBackButton,
+}: FormStepProps & ActionsButtonsProps) {
+  const [inputValue, setInputValue] = useState("");
+
+  const handleSubmit = (e: SyntheticEvent<HTMLFormElement>) => {
+    // previne o comportamento padrão da página
+    e.preventDefault();
+
+    // validação: caso nada esteja escrito, não retornar nada
+    if(!inputValue){
+      return
+    }
+
+    onNext();
+  };
+
   return (
     <div className="bg-card rounded-2xl p-6 shadow-[4px_4px_18px_0px_rgba(0,0,0,0.2)]">
       <div className="bg-primary mb-4 flex h-15 w-15 items-center justify-center rounded-xl">
@@ -42,23 +68,28 @@ export function FormStep({
       <h3 className="text-foreground mb-6 text-xl leading-snug font-semibold sm:text-2xl">
         {question}
       </h3>
-      <form className="flex flex-col gap-4">
-
+      <form onSubmit={handleSubmit} className="flex flex-col gap-4">
         {/* Input component */}
-        <Input {...inputProps} />
+        <Input
+          {...inputProps}
+          value={inputValue}
+          onChange={(e) => setInputValue(e.target.value)}
+        />
 
         <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
-
-          {/* Botão de voltar */}
-          <Button
-            type="button"
-            //onClick={onBack}
-            variant="ghost"
-            icon={ArrowLeft}
-            className="order-2 flex-1 justify-center rounded-xl py-3 sm:order-1"
-          >
-            Voltar
-          </Button>
+          {/* Condicional: se o "hideBackButton" for falso, o botão de voltar será renderizado */}
+          {!hideBackButton && (
+            // Botão de voltar
+            <Button
+              type="button"
+              onClick={onBack}
+              variant="ghost"
+              icon={ArrowLeft}
+              className="order-2 flex-1 justify-center rounded-xl py-3 sm:order-1"
+            >
+              Voltar
+            </Button>
+          )}
 
           {/* Botão de submit (avançar) */}
           <Button
@@ -66,6 +97,7 @@ export function FormStep({
             variant="primary"
             // Se não houver props de submitButtonProps, o ícone do botão será o ArrowRight. Caso contrário, não haverá ícone, indicando o final do formulário ou um comportamento diferente. Isso permite que o botão de submit tenha um comportamento padrão caso não seja fornecido um label ou ícone específico.
             icon={!submitButtonProps ? ArrowRight : undefined}
+            disabled ={!inputValue}
             className="order-1 flex-1 sm:order-2"
           >
             {/* Se a expressão da esquerda for verdadeira, exibe o label do botão de submit. Caso contrário, exibe o texto "Próximo". */}
