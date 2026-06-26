@@ -6,6 +6,8 @@ import { ArrowLeft, ArrowRight, type LucideIcon } from "lucide-react";
 import { Input, type InputProps } from "../../shared/Input";
 import { Button } from "../../shared/Button";
 import { useState, type SyntheticEvent } from "react";
+// máscara monetária
+import { formatCurrencyMask } from "../../../utils/currency";
 
 export interface FormStepProps {
   // Adicionei a propriedade id para identificar cada passo do formulário de forma única. Isso pode ser útil para navegação, rastreamento ou manipulação de estado.
@@ -24,7 +26,7 @@ export interface FormStepProps {
 
 interface ActionsButtonsProps {
   onBack: () => void;
-  onNext: () => void;
+  onNext: (value: string) => void;
   hideBackButton?: boolean;
 }
 
@@ -50,11 +52,11 @@ export function FormStep({
     e.preventDefault();
 
     // validação: caso nada esteja escrito, não retornar nada
-    if(!inputValue){
-      return
+    if (!inputValue) {
+      return;
     }
 
-    onNext();
+    onNext(inputValue);
   };
 
   return (
@@ -73,7 +75,14 @@ export function FormStep({
         <Input
           {...inputProps}
           value={inputValue}
-          onChange={(e) => setInputValue(e.target.value)}
+          onChange={(e) =>
+            setInputValue(
+              // só será formatado o valor do input quando for o caso de dinheiro (quando o 'R$' estiver sendo utilizado)
+              inputProps.prefix === "R$"
+                ? formatCurrencyMask(e.target.value)
+                : e.target.value,
+            )
+          }
         />
 
         <div className="flex flex-col gap-3 sm:flex-row sm:gap-6">
@@ -97,7 +106,7 @@ export function FormStep({
             variant="primary"
             // Se não houver props de submitButtonProps, o ícone do botão será o ArrowRight. Caso contrário, não haverá ícone, indicando o final do formulário ou um comportamento diferente. Isso permite que o botão de submit tenha um comportamento padrão caso não seja fornecido um label ou ícone específico.
             icon={!submitButtonProps ? ArrowRight : undefined}
-            disabled ={!inputValue}
+            disabled={!inputValue}
             className="order-1 flex-1 sm:order-2"
           >
             {/* Se a expressão da esquerda for verdadeira, exibe o label do botão de submit. Caso contrário, exibe o texto "Próximo". */}
