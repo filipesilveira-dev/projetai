@@ -17,3 +17,12 @@ export function formatCurrencyMask(value: string): string {
     maximumFractionDigits: 2,
   });
 }
+
+// Função utilitária
+export function parseCurrency(value: string): number {
+  return (
+    // Pega o valor passado, remove os pontos, troca as vírgulas por pontes, remove o "R$" e transforma em número com o parseFloat
+    parseFloat(value.replace(/\./g, ``).replace(",", ".").replace("R$", "")) ||
+    0
+  );
+}
