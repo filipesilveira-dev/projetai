@@ -8,20 +8,33 @@ import {
 } from "lucide-react";
 import { Card } from "../components/features/simulationResults/Card";
 import { PageHero } from "../components/shared/PageHero";
-import type { SimulationFormData } from "../data/simulation";
+// import type { SimulationFormData } from "../data/simulation"; NÃO É MAIS NECESSÁRIO A PARTIR DO MOMENTO EM QUE AS INFORMAÇÕES VIEREM DO LOCALSTORAGE
 import { calcMonthlySavings } from "../utils/simulation";
+import { useParams } from "react-router-dom";
+import { useSimulationStorage } from "../hooks/useSimulationStorage";
 
-// Simulação de objeto criado a partir de respostas do usuário
-const mock: SimulationFormData = {
-  income: "R$5.000,00",
-  expenses: "R$2.000,00",
-  debts: "R$5.00,00",
-  goalName: "Viagem para o Japão",
-  goalAmount: "R$15.000,00",
-  goalDeadline: "12",
-};
+// Simulação de objeto criado a partir de respostas do usuário. NÃO É MAIS NECESSÁRIO A PARTIR DO MOMENTO EM QUE AS INFORMAÇÕES VIEREM DO LOCALSTORAGE
+// const mock: SimulationFormData = {
+//   income: "R$5.000,00",
+//   expenses: "R$2.000,00",
+//   debts: "R$5.00,00",
+//   goalName: "Viagem para o Japão",
+//   goalAmount: "R$15.000,00",
+//   goalDeadline: "12",
+// };
 export function SimulationResultsPage() {
-  const data = mock;
+  // variável que recebe o id dos parâmetros na URL
+  const { id } = useParams<{ id: string }>();
+  const { getFormData } = useSimulationStorage();
+
+  const data = id ? getFormData(id) : null;
+
+  if (!data) {
+    return <p>Simulação não encontrada</p>;
+  }
+
+  // const data: SimulationFormData = mock; NÃO É MAIS NECESSÁRIO A PARTIR DO MOMENTO EM QUE AS INFORMAÇÕES VIEREM DO LOCALSTORAGE
+
   const monthlySavings = calcMonthlySavings(data);
 
   return (
@@ -56,7 +69,7 @@ export function SimulationResultsPage() {
         <div className="bg-card order-2 rounded-2xl p-6 shadow-[4px_4px_18px_0px_rgba(0,0,0,0.2)] lg:order-1 lg:col-span-2">
           Painel de Insights
         </div>
-        
+
         <div className="order-1 flex flex-col gap-6 lg:order-2">
           <Card
             icon={Wallet}

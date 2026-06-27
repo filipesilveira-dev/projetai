@@ -69,7 +69,7 @@ export const simulationFormSteps = [
     },
   },
   {
-    id: "goalDeadLine",
+    id: "goalDeadline",
     icon: CalendarClock,
     title: "Prazo desejado",
     question: "Em quantos meses você planeja atingir esse objetivo?",
@@ -91,3 +91,6 @@ export type SimulationFormData = Record<
   (typeof simulationFormSteps)[number]["id"],
   string
 >;
+
+// type criado para tipar SimulationFormData com um id sem alterá-lo
+export type SimulationRecord = SimulationFormData & { id: string };

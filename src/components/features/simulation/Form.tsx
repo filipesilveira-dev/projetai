@@ -9,9 +9,9 @@ import { useSimulationStorage } from "../../../hooks/useSimulationStorage.tsx";
 import { useNavigate } from "react-router-dom";
 
 export function SimulationForm() {
-  const {saveFormData} = useSimulationStorage()
+  const { saveFormData } = useSimulationStorage();
   // hook utilizado para navegar entre páginas (utilizado após o clique no botão de "Gerar simulação")
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   // Estado iniciado com o valor “0”, equivalente ao objeto zero da lista
   const [currentStepIndex, setCurrentStepIndex] = useState(0);
   // Estado que receberá o objeto com as respostas do usuário e será salvo no LocalStorage
@@ -25,18 +25,21 @@ export function SimulationForm() {
 
   // função de AVANÇAR acrescentando “+1” via setter ao estado “currentStepIndex”
   const handleNextStep = (value: string) => {
+    // Debug
+    // console.log("ID do Passo Atual:", currentStep.id);
+    // console.log("Valor recebido no handleNextStep:", value, typeof value);
 
     // Constante que reebe o que já tem dentro do objeto "formData" (as propriedades desse objeto são as respostas do usuário) adicionado da resposta do atual formulário
-    const updatedFormData = {...formData, [currentStep.id]: value}
+    const updatedFormData = { ...formData, [currentStep.id]: value };
     // Atualiza o estado "FormData" com a proprieadade que acaba de ser adicionada pelo usuário
-    setFormData(updatedFormData)
+    setFormData(updatedFormData);
 
     // pequena validação: se o [indice atual + 1 for igaul ao tamanho da lista 1, significa que o usuário está no passo final, logo nada será retornado
     if (currentStepIndex + 1 > totalSteps - 1) {
-      // Chamada da função desestruturada do custom hook useSimulationStorage
-      saveFormData(updatedFormData)
-      // após salvar o objeto com suas propriedades (respostas do usuário), o usuário é levado até a página de resultados
-      void navigate ('/resultado')
+      // Chamada da função desestruturada do custom hook useSimulationStorage que retorna o id utilizado
+      const id = saveFormData(updatedFormData);
+      // após salvar o objeto com suas propriedades (respostas do usuário), o usuário é levado até a página de resultados da simulação em específico com base em um id aleatório criado
+      void navigate(`/resultado/${id}`);
       return;
     }
 
