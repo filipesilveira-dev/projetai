@@ -12,6 +12,7 @@ export const router = createBrowserRouter([
         path: "/",
         element: <SimulationFormPage />,
       },
+      // os ":" antes de "id" indicam ao react router que esta rota terá um parte dinâmica
       { path: "/resultado/:id", element: <SimulationResultsPage /> },
       { path: "/historico", element: <h1>Histórico da Simulação</h1> },
     ],
